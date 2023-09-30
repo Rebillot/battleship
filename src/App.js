@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import ShipYard from "./components/ShipYard";
+import Board from "./components/Board";
 
 function App() {
+  const [ships, setShips] = useState([]);
+  const [selectedShipType, setSelectedShipType] = useState(null);
+
+  const handleSelectShip = (shipType) => {
+    setSelectedShipType(shipType);
+    console.log(`Selected ship: ${shipType}`);
+};
+
+const handlePlaceShip = (row, col) => {
+
+    const newShips = [...ships, { type: selectedShipType, row, col }];
+    setShips(newShips);
+    console.log(`Placed ${selectedShipType} at position (${row}, ${col})`);
+};
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Board ships={ships} onSelectShip={handlePlaceShip} />
+      <ShipYard onSelectShip={handleSelectShip} />
     </div>
   );
 }
