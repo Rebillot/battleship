@@ -1,26 +1,16 @@
 body {
   background-color: rgb(82, 82, 82);
   margin: 0;
-  color:#ccc
+  color: #ccc;
 }
-
 
 .grid-container {
   background-color: rgba(0, 0, 0, 0.363);
   display: flex;
   justify-content: space-between;
-
 }
 
-.square:hover {
-  background-color: aquamarine;
-}
-
-.selected {
-  background-color: rgb(156, 189, 9);
-}
-
-.App {
+.App, .start, .fleet {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -29,25 +19,7 @@ body {
 
 .boards {
   display: flex;
-  
 }
-
-.start{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.fleet {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  
-
-}
-
 
 .board {
   display: grid;
@@ -56,10 +28,8 @@ body {
   gap: 2px;
   width: 300px;
   height: 300px;
-  margin: 50px
-
+  margin: 50px;
 }
-
 
 .square {
   width: 100%;
@@ -71,53 +41,46 @@ body {
   font-weight: bold;
   font-size: 1.2rem;
   cursor: pointer;
+  background-color: #274c7e; /* default to white background */
 }
 
-.square.selected {
-  background-color: #3498db;
+/* Hover effect */
+.square:hover {
+  background-color: aquamarine;
 }
 
-/* Styling for dropped ships */
-.ship-cell {
-  background-color: #3498db; 
-  border: 1px solid #fff; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff; 
+/* Square states */
+.square.missed {
+  background-color: #ffb3b3; /* light red for missed */
 }
 
-.selected-ship{
-  background-color: rgb(189, 37, 219);
+/* When the square is clicked but not a ship */
+.clicked {
+  background-color: #e0e0e0; /* gray for clicked */
 }
 
-
-
+/* Individual Ship Colors */
 .Carrier {
   background-color: #FF5733;
-
 }
 
 .Battleship {
   background-color: #3498db;
-
 }
 
 .Cruiser {
   background-color: #2ecc71;
-
 }
 
 .Submarine {
   background-color: #f39c12;
-
 }
 
 .Destroyer {
   background-color: #e74c3c;
-
 }
 
-
-
-
+/* Styling for when a ship is hit */
+.hit {
+  background-color: rgb(241, 0, 0); 
+}

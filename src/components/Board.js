@@ -15,7 +15,11 @@ export default function Board({ ships, onSelectShip }) {
           <div
             key={`${row}-${col}`}
             className={`square ${shipClass}`}
-            onClick={() => onSelectShip(row, col) }
+            onClick={() => {
+              if (onSelectShip) {
+                onSelectShip(row, col);
+              }
+            }}
           ></div>
         );
       }

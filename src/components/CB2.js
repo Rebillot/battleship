@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ShipArray from "./ShipConstructor.js";
-import ShipYardComputer from "./ShipYardComputer.js";
+
 
 const generateRandomShips = () => {
     const randomShips = [];
@@ -31,13 +31,45 @@ const generateRandomShips = () => {
   };
 
 export default function ComputerBoard() {
-  const [board, setBoard] = useState([]);
+  const [ships, setShips] = useState([]);
+  const [lastClicked, setLastClicked] = useState(null);
+  const [missedShots, setMissedShots] = useState([]); // [ [row, col], [row, col], ...
+  const coordinatesRef = useRef([]);
 
+
+
+  const handlePlayerAttack = (row, col) => {
+    // Check if the given row and col matches any ship's position
+    const attackedShipIndex = ships.findIndex((ship) => ship.row === row && ship.col === col);
+    if (attackedShipIndex !== -1) {
+        // Create a copy of the ships array and update the status
+        const updatedShips = [...ships];
+        updatedShips[attackedShipIndex] = { ...updatedShips[attackedShipIndex], status: 'hit' };
+        console.log(updatedShips[attackedShipIndex], "hit")
+ 
+        setShips(updatedShips); // Update the ships array
+    } else {
+
+       setMissedShots([...missedShots, [row, col]]);
+       console.log(missedShots, "missedShots")
+    }
+};
+
+  const handleSquareClick = (row, col) => {
+    const clickedCoordinates = [row, col];
+  
+    if (!coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col)) {
+      coordinatesRef.current = [...coordinatesRef.current, clickedCoordinates];
+      handlePlayerAttack(row, col);
+      setLastClicked(clickedCoordinates);
+    }
+};
+  
   const handlePlaceShip = (row, col, shipLength, ships) => {
     const newShips = [...ships];
     const directions = [
-      [1, 0],  // right direction
-      [0, 1],  // down direction
+      [1, 0],  // right
+      [0, 1],  // down 
     ];
   
     for (let dir of directions) {
@@ -71,10 +103,9 @@ export default function ComputerBoard() {
     return ships;
   };
 
-  useEffect(() => {
+  const initializeGame = () => {
     const randomShips = generateRandomShips();
     let ships = randomShips;
-
 
     for (let i = 0; i < ships.length; i++) {
       ships = handlePlaceShip(
@@ -85,30 +116,50 @@ export default function ComputerBoard() {
       );
     }
 
-    const initialBoard = [];
+    coordinatesRef.current = [];
+    setShips(ships);
+    console.log(ships, "ships");
+    console.log(coordinatesRef.current, "coordinatesRef");
+  };
+
+  const renderBoard = () => {
+    const boardElements = [];
     for (let row = 0; row < 10; row++) {
-      const columns = [];
-      for (let col = 0; col < 10; col++) {
-        const shipAtPosition = ships.find((ship) => ship.row === row && ship.col === col);
-        const shipClass = shipAtPosition ? shipAtPosition.ship.name : "";
-        const shipLength = shipAtPosition ? shipAtPosition.length : 0;
+        const columns = [];
+        for (let col = 0; col < 10; col++) {
+            const isSquareClicked = coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col);
+            const shipAtPosition = ships.find((ship) => ship.row === row && ship.col === col);
+            const shipClass = shipAtPosition ? (shipAtPosition.status === 'hit' ? 'hit-ship' : shipAtPosition.ship.name) : '';       
 
-       {
-          columns.push(
-            <div
-              key={`${row}-${col}`} // Use unique key for each div element
-              className={`square ${shipClass}`}
-            ></div>
-          );
-          
-        } 
-      }
-      initialBoard.push(<div className="board-row" key={row}>{columns}</div>);
+            let squareClass = 'square'; 
+            if (isSquareClicked) {
+                if (shipAtPosition && shipAtPosition.status === 'hit') {
+                    squareClass = 'square hit ship';
+                } else {
+                    squareClass = 'square missed'; 
+                }
+            }
+        
+            columns.push(
+                <div
+                    key={`${row}-${col}`} 
+                    className={`${squareClass} ${shipClass}`}
+                    onClick={() => handleSquareClick(row, col)}
+                ></div>
+            );
+        }
+        boardElements.push(<div className="board-row" key={row}> {columns} </div>);
     }
+    return boardElements;
+};
 
-    setBoard(initialBoard);
-  }, []); 
-  
+  useEffect(() => {
+      initializeGame();
+  }, []);
 
-  return <div className="board">{board}</div>;
+
+  return <div className="board">
+  {renderBoard()}
+</div>;
+
 }
