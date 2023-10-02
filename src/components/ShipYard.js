@@ -4,7 +4,7 @@ import ShipArray from "./ShipConstructor";
 
 export default function ShipYard({ onSelectShip }) {
     const [selectedShip, setSelectedShip] = useState(null);
-  
+
     const handleShipClick = (shipName, shipLength) => {
       setSelectedShip(shipName === selectedShip ? null : shipName);
       onSelectShip(shipName, shipLength);

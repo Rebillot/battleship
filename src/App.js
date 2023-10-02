@@ -13,12 +13,6 @@ function App() {
   const { currentTurn, toggleTurn } = useTurn();
 
 
-
-
-
-
-
-
   // Generate player ships
   const handleSelectShip = (shipType, shipLength) => {
     console.log("Selected shipType:", shipType);
@@ -77,7 +71,7 @@ function App() {
 
   return (
     <>
-      <div className="start">
+      <div className="start" style={{marginTop: '50px'}}>
         <button onClick={() => setIsGameStarted(!isGameStarted)}>
           Start Game
         </button>
@@ -96,10 +90,14 @@ function App() {
           </div>
         </div>
       )}
+      {isGameStarted && (
       <div>
+        <div>
         <PlaceShips />
       </div>
       <ShipYard onSelectShip={isGameStarted ? handleSelectShip : null} />
+      </div>
+      )}
     </>
   );
 }
