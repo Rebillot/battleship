@@ -34,7 +34,7 @@ const generateRandomShips = () => {
       col: randomCol,
     });
   }
-  console.log(randomShips);
+
   return randomShips;
 };
 

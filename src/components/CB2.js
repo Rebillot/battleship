@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import ShipArray from "./ShipConstructor.js";
+import { useTurn } from "./Context/Context.js";
+
 
 
 const generateRandomShips = () => {
@@ -26,7 +28,6 @@ const generateRandomShips = () => {
         col: randomCol,
       });
     }
-    console.log(randomShips);
     return randomShips;
   };
 
@@ -35,6 +36,7 @@ export default function ComputerBoard() {
   const [lastClicked, setLastClicked] = useState(null);
   const [missedShots, setMissedShots] = useState([]); // [ [row, col], [row, col], ...
   const coordinatesRef = useRef([]);
+  const { currentTurn, toggleTurn } = useTurn();
 
 
 
@@ -42,29 +44,32 @@ export default function ComputerBoard() {
     // Check if the given row and col matches any ship's position
     const attackedShipIndex = ships.findIndex((ship) => ship.row === row && ship.col === col);
     if (attackedShipIndex !== -1) {
-        // Create a copy of the ships array and update the status
+        // Create copy of the ships array and update status
         const updatedShips = [...ships];
         updatedShips[attackedShipIndex] = { ...updatedShips[attackedShipIndex], status: 'hit' };
-        console.log(updatedShips[attackedShipIndex], "hit")
+        
  
         setShips(updatedShips); // Update the ships array
     } else {
 
        setMissedShots([...missedShots, [row, col]]);
-       console.log(missedShots, "missedShots")
+       
     }
 };
 
-  const handleSquareClick = (row, col) => {
+const handleSquareClick = (row, col) => {
+  if (currentTurn === "player") {
     const clickedCoordinates = [row, col];
-  
+
     if (!coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col)) {
       coordinatesRef.current = [...coordinatesRef.current, clickedCoordinates];
       handlePlayerAttack(row, col);
       setLastClicked(clickedCoordinates);
+      toggleTurn();
+      console.log("computer's turn")
     }
+  }
 };
-  
   const handlePlaceShip = (row, col, shipLength, ships) => {
     const newShips = [...ships];
     const directions = [
@@ -104,22 +109,24 @@ export default function ComputerBoard() {
   };
 
   const initializeGame = () => {
-    const randomShips = generateRandomShips();
-    let ships = randomShips;
-
-    for (let i = 0; i < ships.length; i++) {
-      ships = handlePlaceShip(
-        ships[i].row,
-        ships[i].col,
-        ships[i].length,
-        ships
-      );
-    }
-
-    coordinatesRef.current = [];
-    setShips(ships);
-    console.log(ships, "ships");
-    console.log(coordinatesRef.current, "coordinatesRef");
+    
+      // Initialize the game for the computer's turn (randomly place computer ships)
+      const randomShips = generateRandomShips();
+      let ships = randomShips;
+  
+      for (let i = 0; i < ships.length; i++) {
+        ships = handlePlaceShip(
+          ships[i].row,
+          ships[i].col,
+          ships[i].length,
+          ships
+        );
+      }
+  
+      coordinatesRef.current = [];
+      setShips(ships);
+      
+    
   };
 
   const renderBoard = () => {

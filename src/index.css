@@ -64,6 +64,14 @@ body {
   background-color: #FF5733;
 }
 
+.miss {
+  background-color: rgb(216, 17, 199) !important; 
+}
+
+.hit{
+  background-color: rgb(80, 64, 64) !important;
+}
+
 .Battleship {
   background-color: #3498db;
 }
@@ -81,6 +89,3 @@ body {
 }
 
 /* Styling for when a ship is hit */
-.hit {
-  background-color: rgb(241, 0, 0); 
-}

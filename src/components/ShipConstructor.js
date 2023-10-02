@@ -6,6 +6,7 @@ class Ship {
         this.length = length;
         this.width = 10;
         this.height = length;
+        this.health = length;
 
     }
 }

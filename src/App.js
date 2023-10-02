@@ -1,47 +1,23 @@
 import React, { useState } from "react";
 import ShipYard from "./components/ShipYard";
 import Board from "./components/Board";
-// import ComputerBoard from "./components/ComputerBoard";
 import ComputerBoard from "./components/CB2";
 import PlaceShips from "./components/PlaceShips";
+import { useTurn } from "./components/Context/Context";
+
 
 function App() {
   const [ships, setShips] = useState([]);
   const [selectedShipType, setSelectedShipType] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [atackingComputer, setAtackingComputer] = useState(false);
-  const [coordinates, setCoordinates] = useState([]);
-
-  //Game logic
-  // const handleAtack = (row, col) => {
-  //   if (!isGameStarted || atackingComputer) {
-  //     console.log("Game not started or computer is atacking");
-  //     return;
-  //   }
-  //   const hit = ships.some((ship) => {
-  //     return ship.positions.some((pos) => pos.row === row && pos.col === col);
-  //   });
-  //   if (hit) {
-  //     console.log("Hit!");
-  //   } else {
-  //     console.log("Miss!");
-  //   }
-  // };
+  const { currentTurn, toggleTurn } = useTurn();
 
 
-  
 
-  // Check if all ships are sunk
-  const checkGameOutcome = () => {
-    const AllShipsSunk = ships.every((ship) => {
-      return ship.positions.every((pos) => pos.isHit);
-    });
-    if (AllShipsSunk) {
-      console.log("Game over");
-    } else {
-      console.log("Game continues");
-    }
-  };
+
+
+
+
 
   // Generate player ships
   const handleSelectShip = (shipType, shipLength) => {
@@ -58,7 +34,7 @@ function App() {
 
   const handlePlaceShip = (row, col, shipLength) => {
     const newShips = [...ships];
-
+    if (currentTurn === "player") {
     // Check if there is enough space horizontally and no ship
     let canPlaceShip = true;
     for (let i = col; i < col + shipLength; i++) {
@@ -91,10 +67,11 @@ function App() {
         return;
       }
     }
+  }
 
     setShips(newShips);
     console.log(
-      `Placed ${selectedShipType.type} with length ${shipLength} at position (${row}, ${col})`
+      `Placed ${selectedShipType.type} with length ${shipLength} at position (${row}, ${col} } Current Turn:  ${currentTurn}`
     );
   };
 
@@ -103,7 +80,6 @@ function App() {
       <div className="start">
         <button onClick={() => setIsGameStarted(!isGameStarted)}>
           Start Game
-          {console.log("Game started")}
         </button>
       </div>
       {isGameStarted && (
@@ -112,7 +88,7 @@ function App() {
             <Board
               ships={ships}
               onSelectShip={(row, col) => {
-                // handleAtack(row, col);
+
                 handlePlaceShip(row, col, selectedShipType.length);
               }}
             />
