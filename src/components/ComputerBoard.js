@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ShipArray from "./ShipConstructor.js";
-import ShipYardComputer from "./ShipYardComputer.js";
+
 
 const shipColors = {
   Carrier: "#FF5733",
