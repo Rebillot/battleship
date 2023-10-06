@@ -48,6 +48,9 @@ body {
 .square:hover {
   background-color: aquamarine;
 }
+.selected-ship {
+  background-color: #ca52ba;
+}
 
 /* Square states */
 .square.missed {
