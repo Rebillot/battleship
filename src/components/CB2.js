@@ -95,7 +95,7 @@ const handleSquareClick = (row, col) => {
       }
   
       if (canPlaceShip) {
-        for (let i = 0; i < shipLength; i++) {
+        for (let i = 0; i < shipLength; i++) { 
           const newRow = row + i * rowDir;
           const newCol = col + i * colDir;
   
