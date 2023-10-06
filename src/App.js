@@ -75,7 +75,7 @@ function App() {
         </button>
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <h2> Current Turn: {currentTurn} </h2>
+         {isGameStarted && ( <h2> Current Turn: {currentTurn} </h2>) }
       </div>
       <div style={{ display: "flex" }}>
     <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
