@@ -61,15 +61,15 @@ export default function ComputerBoard() {
     if (currentTurn === "player") {
       const clickedCoordinates = [row, col];
 
-      if (!coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col)) {
-        coordinatesRef.current = [...coordinatesRef.current, clickedCoordinates];
-        handlePlayerAttack(row, col);
-        setLastClicked(clickedCoordinates);
-        toggleTurn();
-        console.log("computer's turnn")
-      }
+    if (!coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col)) {
+      coordinatesRef.current = [...coordinatesRef.current, clickedCoordinates];
+      handlePlayerAttack(row, col);
+      setLastClicked(clickedCoordinates);
+      toggleTurn();
+      console.log("computer's turn")
     }
-  };
+  }
+};
   const handlePlaceShip = (row, col, shipLength, ships) => {
     const newShips = [...ships];
     const directions = [
