@@ -66,7 +66,7 @@ export default function ComputerBoard() {
         handlePlayerAttack(row, col);
         setLastClicked(clickedCoordinates);
         toggleTurn();
-        console.log("computer's turn")
+        console.log("computer's turnn")
       }
     }
   };
