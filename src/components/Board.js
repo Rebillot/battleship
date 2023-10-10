@@ -7,6 +7,8 @@ export default function Board({ ships, onSelectShip }) {
   const [misses, setMisses] = useState([]);
   const [attackedCount, setAttackedCount] = useState(0);
   const { currentTurn, toggleTurn } = useTurn();
+ 
+
 
 // bot
   const isHit = (row, col) => hits.some(h => h.row === row && h.col === col);
@@ -44,7 +46,7 @@ export default function Board({ ships, onSelectShip }) {
       } else {
         clearInterval(interval);
       }
-    }, 1000);
+    }, 600);
 
     return () => clearInterval(interval); 
     
