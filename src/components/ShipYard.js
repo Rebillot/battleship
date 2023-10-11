@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ShipArray from "./ShipConstructor";
 
 
-export default function ShipYard({ onSelectShip }) {
+export default function ShipYard({ onSelectShip, setGamePhase }) {
   const [selectedShip, setSelectedShip] = useState(null);
   const [orientation, setOrientation] = useState('horizontal');
 
@@ -10,6 +10,11 @@ export default function ShipYard({ onSelectShip }) {
     setSelectedShip(shipName === selectedShip ? null : shipName);
     onSelectShip(shipName, shipLength, orientation); // added orientation here
   };
+
+  const handleStartGame = () => {
+    setGamePhase("playing");
+  };
+
 
   return (
     <>

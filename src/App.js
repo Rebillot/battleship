@@ -4,12 +4,14 @@ import Board from "./components/Board";
 import ComputerBoard from "./components/CB2";
 import PlaceShips from "./components/PlaceShips";
 import { useTurn } from "./components/Context/Context";
+import { ScoreBoard } from "./components/ScoreBoard";
 
 function App() {
   const [ships, setShips] = useState([]);
   const [selectedShipType, setSelectedShipType] = useState(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const { currentTurn, toggleTurn } = useTurn();
+  const [gamePhase, setGamePhase] = useState("positioning"); // can be "positioning" or "playing"
 
   // Generate player ships
   const handleSelectShip = (shipType, shipLength) => {
@@ -97,7 +99,7 @@ function App() {
               }}
             />
 
-            <ComputerBoard />
+            <ComputerBoard gamePhase={gamePhase}/>
           </div>
         </div>
       )}
@@ -106,9 +108,10 @@ function App() {
           <div>
             <PlaceShips />
           </div>
-          <ShipYard onSelectShip={isGameStarted ? handleSelectShip : null} />
+          <ShipYard onSelectShip={isGameStarted ? handleSelectShip : null} setGamePhase={setGamePhase} />
         </div>
       )}
+       <ScoreBoard />
     </>
   );
 }

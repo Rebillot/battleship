@@ -64,17 +64,22 @@ body {
   background-color: #e0e0e0; /* gray for clicked */
 }
 
+/* When the square is clicked and is a ship */
+.miss {
+  background-color: rgb(9, 33, 63) !important; 
+}
+.hit{
+  background-color: rgb(255, 0, 0) !important;
+}
+.destroyed {
+  background-color: rgb(0, 0, 0) !important;
+}
+
+
 /* Individual Ship Colors */
+
 .Carrier {
   background-color: #FF5733;
-}
-
-.miss {
-  background-color: rgb(216, 17, 199) !important; 
-}
-
-.hit{
-  background-color: rgb(80, 64, 64) !important;
 }
 
 .Battleship {
@@ -94,3 +99,15 @@ body {
 }
 
 /* Styling for when a ship is hit */
+
+
+/* score board styling */
+
+.scoreboard {
+  padding: 10px;
+  background-color: #22d4d4;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  text-align: center;
+  color: black;
+}

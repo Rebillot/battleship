@@ -3,11 +3,10 @@ import { useTurn } from "./Context/Context";
 
 export default function Board({ ships, onSelectShip }) {
   const [board, setBoard] = useState([]);
-  const [hits, setHits] = useState([]);
-  const [misses, setMisses] = useState([]);
+  const [gamePhase, setGamePhase] = useState("positioning");  // can be "positioning" or "playing"
+
   const [attackedCount, setAttackedCount] = useState(0);
-  const { currentTurn, toggleTurn } = useTurn();
- 
+  const { hits, setHits, misses, setMisses, currentTurn, toggleTurn } = useTurn();
 
 
 // bot
@@ -30,10 +29,11 @@ export default function Board({ ships, onSelectShip }) {
     } while (isAttacked(row, col));
   
     if (shipAtPosition) {
-      setHits(prevHits => [...prevHits, { row, col }]);
+      setHits(prevHits => [...prevHits, { row, col, source: 'computer' }]);
     } else {
-      setMisses(prevMisses => [...prevMisses, { row, col }]);
+      setMisses(prevMisses => [...prevMisses, { row, col, source: 'computer' }]);
     }
+    
     setAttackedCount(prevCount => prevCount + 1);
   };
   
@@ -66,10 +66,22 @@ export default function Board({ ships, onSelectShip }) {
             key={`${row}-${col}`}
             className={`square ${shipClass} ${attackClass}`}
             onClick={() => {
-              if (onSelectShip) {
-                onSelectShip(row, col);
+              if (gamePhase === "positioning") {
+                if (onSelectShip) {
+                  onSelectShip(row, col);
+                }
+              } else if (gamePhase === "playing") {
+                // Only perform the hit/miss check when actually playing the game
+                const shipAtPosition = ships.find(ship => ship.row === row && ship.col === col);
+                if (shipAtPosition && !isAttacked(row, col)) {
+                  setHits(prevHits => [...prevHits, { row, col, source: 'player' }]);
+                } else if (!shipAtPosition && !isAttacked(row, col)) {
+                  setMisses(prevMisses => [...prevMisses, { row, col, source: 'player' }]);
+                }
               }
             }}
+            
+            
           ></div>
         );
       }

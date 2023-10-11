@@ -8,13 +8,17 @@ export const useTurn = () => {
 
 export const TurnProvider = ({ children }) => {
   const [currentTurn, setCurrentTurn] = useState("player");
+  const [hits, setHits] = useState([]); 
+  const [misses, setMisses] = useState([]);
+  const [playerhits, setPlayerHits] = useState([]);
+  const [playermisses, setPlayerMisses] = useState([]);
 
   const toggleTurn = () => {
     setCurrentTurn(prevTurn => (prevTurn === "player" ? "computer" : "player"));
   };
 
   return (
-    <TurnContext.Provider value={{ currentTurn, toggleTurn }}>
+    <TurnContext.Provider value={{ currentTurn, toggleTurn, hits, setHits, misses, setMisses, playerhits, setPlayerHits, playermisses, setPlayerMisses }}>
       {children}
     </TurnContext.Provider>
   );

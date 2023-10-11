@@ -36,40 +36,59 @@ export default function ComputerBoard() {
   const [lastClicked, setLastClicked] = useState(null);
   const [missedShots, setMissedShots] = useState([]); // [ [row, col], [row, col], ...
   const coordinatesRef = useRef([]);
-  const { currentTurn, toggleTurn } = useTurn();
+  const { currentTurn, toggleTurn, hits, setHits, misses, setMisses, playerhits, setPlayerHits, playermisses, setPlayerMisses } = useTurn();
+
 
 
 
   const handlePlayerAttack = (row, col) => {
-    // Check if the given row and col matches any ship's position
-    const attackedShipIndex = ships.findIndex((ship) => ship.row === row && ship.col === col);
+    let attackedShipIndex = -1;
+
+    for (let ship of ships) {
+      for (let i = 0; i < ship.length; i++) {
+        if (ship.row + i === row && ship.col === col) {
+          attackedShipIndex = ships.indexOf(ship);
+          break;
+        }
+      }
+      if (attackedShipIndex !== -1) break;
+    }  /*starting point for the ship*/
+
     if (attackedShipIndex !== -1) {
-      // Create copy of the ships array and update status
+      setPlayerHits(prevHits => [...prevHits, { row, col }]);
+
+
       const updatedShips = [...ships];
-      updatedShips[attackedShipIndex] = { ...updatedShips[attackedShipIndex], status: 'hit' };
+      const ship = updatedShips[attackedShipIndex];
+      ship.hits += 1;
 
+      if (ship.hits === ship.length) {
+        ship.status = 'destroyed';
+      } else {
+        ship.status = 'hit';
+      }
 
-      setShips(updatedShips); // Update the ships array
+      setShips(updatedShips);
     } else {
-
+      setPlayerMisses(prevMisses => [...prevMisses, { row, col }]);
       setMissedShots([...missedShots, [row, col]]);
-
     }
   };
+
 
   const handleSquareClick = (row, col) => {
     if (currentTurn === "player") {
       const clickedCoordinates = [row, col];
 
-    if (!coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col)) {
-      coordinatesRef.current = [...coordinatesRef.current, clickedCoordinates];
-      handlePlayerAttack(row, col);
-      setLastClicked(clickedCoordinates);
-      toggleTurn();
-      console.log("computer's turn")
+      if (!coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col)) {
+        coordinatesRef.current = [...coordinatesRef.current, clickedCoordinates];
+        handlePlayerAttack(row, col);
+        setLastClicked(clickedCoordinates);
+        toggleTurn();
+      }
     }
-  }
-};
+  };
+  
   const handlePlaceShip = (row, col, shipLength, ships) => {
     const newShips = [...ships];
     const directions = [
@@ -122,6 +141,7 @@ export default function ComputerBoard() {
         ships
       );
     }
+    ships = ships.map(ship => ({ ...ship, hits: 0, status: 'intact' }));
 
     coordinatesRef.current = [];
     setShips(ships);
@@ -147,24 +167,21 @@ export default function ComputerBoard() {
           if (shipAtPosition) break;
         }
 
-        const shipClass = shipAtPosition ? shipAtPosition.ship.name : '';
-
         let squareClass = 'square';
+
         if (isSquareClicked) {
-          if (shipAtPosition && shipAtPosition.status === 'hit') {
-            // If the ship is hit, then only the class 'hit' is added
-            squareClass += ` ${shipClass} hit`;
+          if (shipAtPosition) {
+            squareClass += ` ${shipAtPosition.status}`;  // add hit or destroyed class
+            console.log(shipAtPosition, "shipAtPosition.status")
           } else {
-            // If no ship is hit, only 'missed' is added
-            squareClass += ` ${shipClass} missed`;
+            squareClass += ' missed';  // missed shot
           }
         }
-
 
         columns.push(
           <div
             key={`${row}-${col}`}
-            className={`${squareClass} ${shipClass}`}
+            className={`${squareClass} ${shipAtPosition ? shipAtPosition.ship.name : ''}`}
             onClick={() => handleSquareClick(row, col)}
           ></div>
         );
@@ -174,6 +191,8 @@ export default function ComputerBoard() {
 
     return boardElements;
   };
+
+
 
 
   useEffect(() => {
