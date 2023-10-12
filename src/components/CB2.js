@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import ShipArray from "./ShipConstructor.js";
+import GameOverModal from "./GameOverModal.js";
 import { useTurn } from "./Context/Context.js";
 
 
@@ -37,6 +38,8 @@ export default function ComputerBoard() {
   const [missedShots, setMissedShots] = useState([]); // [ [row, col], [row, col], ...
   const coordinatesRef = useRef([]);
   const { currentTurn, toggleTurn, hits, setHits, misses, setMisses, playerhits, setPlayerHits, playermisses, setPlayerMisses } = useTurn();
+  const [gameOver, setGameOver] = useState(false);
+
 
 
 
@@ -67,6 +70,19 @@ export default function ComputerBoard() {
       } else {
         ship.status = 'hit';
       }
+      if (ship.hits === ship.length) {
+        ship.status = 'destroyed';
+      
+        // Check if all ships are destroyed
+        const allShipsDestroyed = updatedShips.every(ship => ship.status === 'destroyed');
+        if (allShipsDestroyed) {
+          setGameOver(true);
+          // You can display a message or take any other action here
+        }
+      } else {
+        ship.status = 'hit';
+      }
+      
 
       setShips(updatedShips);
     } else {
@@ -77,6 +93,7 @@ export default function ComputerBoard() {
 
 
   const handleSquareClick = (row, col) => {
+    if (gameOver) return;
     if (currentTurn === "player") {
       const clickedCoordinates = [row, col];
 
@@ -128,7 +145,7 @@ export default function ComputerBoard() {
   };
 
   const initializeGame = () => {
-
+    setGameOver(false);
     // Initialize the game for the computer's turn (randomly place computer ships)
     const randomShips = generateRandomShips();
     let ships = randomShips;
@@ -200,8 +217,10 @@ export default function ComputerBoard() {
   }, []);
 
 
-  return <div className="board">
-    {renderBoard()}
-  </div>;
-
+  return (
+    <div className="board">
+      <GameOverModal isVisible={gameOver} onRestart={initializeGame} />
+      {renderBoard()}
+    </div>
+  );
 }
