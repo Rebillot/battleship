@@ -4,7 +4,7 @@ import GameOverModal from "./GameOverModal.js";
 import { useTurn } from "./Context/Context.js";
 
 
-
+// gene
 const generateRandomShips = () => {
   const randomShips = [];
   const availableRows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -37,7 +37,7 @@ export default function ComputerBoard() {
   const [lastClicked, setLastClicked] = useState(null);
   const [missedShots, setMissedShots] = useState([]); // [ [row, col], [row, col], ...
   const coordinatesRef = useRef([]);
-  const { currentTurn, toggleTurn, hits, setHits, misses, setMisses, playerhits, setPlayerHits, playermisses, setPlayerMisses } = useTurn();
+  const { currentTurn, toggleTurn, setPlayerHits, setPlayerMisses } = useTurn();
   const [gameOver, setGameOver] = useState(false);
 
 

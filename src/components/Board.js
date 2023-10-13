@@ -1,4 +1,4 @@
-import React, { useEffect, useState,} from "react";
+import React, { useEffect, useState, } from "react";
 import { useTurn } from "./Context/Context";
 
 // Game over modal component
@@ -26,103 +26,101 @@ export default function Board({ ships, onSelectShip }) {
   const [gameOver, setGameOver] = useState(false);
   const [attackedCount, setAttackedCount] = useState(0);
   const { hits, setHits, misses, setMisses, currentTurn, toggleTurn } = useTurn();
-  
 
-// reset game function
+
+  // reset game function
 
   function resetGame() {
-    setBoard([]);         
-    setGamePhase("positioning");  
-    setGameOver(false);   
-    setAttackedCount(0);  
-    setHits([]);          
-    setMisses([]); 
-    window.location.reload();       
+    setBoard([]);
+    setGamePhase("positioning");
+    setGameOver(false);
+    setAttackedCount(0);
+    setHits([]);
+    setMisses([]);
+    window.location.reload();
 
   }
 
-  // useEffect to check for game over
-  
+  // useEffect to check if the computer has won the game
+
   useEffect(() => {
     if (hits.length === ships.length && ships.length !== 0) {
       setGameOver(true);
     }
-}, [hits, ships]);
+  }, [hits, ships]);
 
 
-// Computer logic to attack the player's board
+  // Computer logic to attack the player's board
 
   const isHit = (row, col) => hits.some(h => h.row === row && h.col === col);
   const isMiss = (row, col) => misses.some(m => m.row === row && m.col === col);
   const isAttacked = (row, col) => isHit(row, col) || isMiss(row, col);
-  const [target, setTarget] = useState(null);
-const [direction, setDirection] = useState(null);  // can be 'vertical' or 'horizontal'
-const [lastHits, setLastHits] = useState([])
+  const [lastHits, setLastHits] = useState([])
 
-const getUnexploredAdjacentSquare = () => {
-  const allDirections = ['up', 'down', 'left', 'right'];
-  for (let hit of lastHits) {
-    for (let dir of allDirections) {
-      let newRow = hit.row, newCol = hit.col;
-      switch (dir) {
-        case 'up':
-          newRow--;
-          break;
-        case 'down':
-          newRow++;
-          break;
-        case 'left':
-          newCol--;
-          break;
-        case 'right':
-          newCol++;
-          break;
-        default:
-          break;
-      }
-      if (newRow >= 0 && newRow < 10 && newCol >= 0 && newCol < 10 && !isAttacked(newRow, newCol)) {
-        return { row: newRow, col: newCol };
+  const getUnexploredAdjacentSquare = () => {
+    const allDirections = ['up', 'down', 'left', 'right'];
+    for (let hit of lastHits) {
+      for (let dir of allDirections) {
+        let newRow = hit.row, newCol = hit.col;
+        switch (dir) {
+          case 'up':
+            newRow--;
+            break;
+          case 'down':
+            newRow++;
+            break;
+          case 'left':
+            newCol--;
+            break;
+          case 'right':
+            newCol++;
+            break;
+          default:
+            break;
+        }
+        if (newRow >= 0 && newRow < 10 && newCol >= 0 && newCol < 10 && !isAttacked(newRow, newCol)) {
+          return { row: newRow, col: newCol };
+        }
       }
     }
-  }
-  return null;
-};
+    return null;
+  };
 
-const attackBoard = () => {
-  let row, col, shipAtPosition;
-  
-  const nextSquare = getUnexploredAdjacentSquare();
-  if (nextSquare) {
-    row = nextSquare.row;
-    col = nextSquare.col;
-  } else {
-    let attempts = 0;
-    do {
-      row = Math.floor(Math.random() * 10);
-      col = Math.floor(Math.random() * 10);
-      attempts++;
-      if (attempts > 100) {
-        return;
-      }
-    } while (isAttacked(row, col));
-  }
+  const attackBoard = () => {
+    let row, col, shipAtPosition;
 
-  shipAtPosition = ships.find((ship) => ship.row === row && ship.col === col);
-  if (shipAtPosition) {
-    setHits(prevHits => [...prevHits, { row, col, source: 'computer' }]);
-    setLastHits(prevLastHits => [...prevLastHits, { row, col }]);
-  } else {
+    const nextSquare = getUnexploredAdjacentSquare();
     if (nextSquare) {
-      // This was a calculated attack based on a hit, but it missed. Remove the hit from lastHits.
-      setLastHits(prevLastHits => prevLastHits.filter(hit => !(hit.row === nextSquare.row && hit.col === nextSquare.col)));
+      row = nextSquare.row;
+      col = nextSquare.col;
+    } else {
+      let attempts = 0;
+      do {
+        row = Math.floor(Math.random() * 10);
+        col = Math.floor(Math.random() * 10);
+        attempts++;
+        if (attempts > 100) {
+          return;
+        }
+      } while (isAttacked(row, col));
     }
-    setMisses(prevMisses => [...prevMisses, { row, col, source: 'computer' }]);
-  }
 
-  setAttackedCount(prevCount => prevCount + 1);
-};
+    shipAtPosition = ships.find((ship) => ship.row === row && ship.col === col);
+    if (shipAtPosition) {
+      setHits(prevHits => [...prevHits, { row, col, source: 'computer' }]);
+      setLastHits(prevLastHits => [...prevLastHits, { row, col }]);
+    } else {
+      if (nextSquare) {
+        // This was a calculated attack based on a hit, but it missed. Remove the hit from lastHits.
+        setLastHits(prevLastHits => prevLastHits.filter(hit => !(hit.row === nextSquare.row && hit.col === nextSquare.col)));
+      }
+      setMisses(prevMisses => [...prevMisses, { row, col, source: 'computer' }]);
+    }
 
-// interval to count atacks, and toggle turns. the board is 100 squares, so the computer will attack 100 times, and then the game will end.
+    setAttackedCount(prevCount => prevCount + 1);
+  };
+
+  // interval to count atacks, and toggle turns. the board is 100 squares, so the computer will attack 100 times, and then the game will end.
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -134,14 +132,14 @@ const attackBoard = () => {
       }
     }, 600);
 
-    return () => clearInterval(interval); 
-    
-}, [currentTurn, toggleTurn, hits, misses, ships, attackedCount]);
+    return () => clearInterval(interval);
+
+  }, [currentTurn, toggleTurn, hits, misses, ships, attackedCount]);
 
 
 
 
-// useEffect to render the board, and check for hits and misses
+  // useEffect to render the board, and check for hits and misses
 
   useEffect(() => {
     const initialBoard = [];
@@ -171,13 +169,12 @@ const attackBoard = () => {
                 }
               }
             }}
-            
-            
+
+
           ></div>
         );
-      } 
-      console.log(hits.length)
-      
+      }
+
       initialBoard.push(<div className="board-row" key={row}>{columns}</div>);
     }
     setBoard(initialBoard);
@@ -186,12 +183,12 @@ const attackBoard = () => {
 
 
 
-// render the board, and the game over modal
+  // render the board, and the game over modal
 
   return (
     <div className="board">
       <GameOverModal isVisible={gameOver} onRestart={resetGame} />
       {board}
     </div>
-  );  
+  );
 }

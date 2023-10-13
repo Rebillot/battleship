@@ -12,6 +12,7 @@ function App() {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const { currentTurn, toggleTurn } = useTurn();
   const [gamePhase, setGamePhase] = useState("positioning"); // can be "positioning" or "playing"
+  const [shipOrientation, setShipOrientation] = useState("horizontal");
 
   // Generate player ships
   const handleSelectShip = (shipType, shipLength) => {
@@ -28,46 +29,61 @@ function App() {
 
   const handlePlaceShip = (row, col, shipLength) => {
     const newShips = [...ships];
-    if (currentTurn === "player") {
-      // Check if there is enough space horizontally and no ship
-      let canPlaceShip = true;
-      for (let i = col; i < col + shipLength; i++) {
-        if (newShips.some((ship) => ship.row === row && ship.col === i)) {
-          canPlaceShip = false;
-          break;
-        }
-      }
 
-      if (canPlaceShip && col + shipLength <= 10) {
+    if (currentTurn !== "player") {
+        console.log("It's not the player's turn");
+        return;
+    }
+
+    let canPlaceShip = true;
+
+    if (shipOrientation === "vertical") {
+
+        // Check if there is enough space horizontally and no ship
         for (let i = col; i < col + shipLength; i++) {
-          newShips.push({ type: selectedShipType.type, row, col: i });
+            if (newShips.some((ship) => ship.row === row && ship.col === i)) {
+                canPlaceShip = false;
+                break;
+            }
         }
-      } else {
-        canPlaceShip = true;
+
+        if (canPlaceShip && col + shipLength <= 10) {
+            for (let i = col; i < col + shipLength; i++) {
+                newShips.push({ type: selectedShipType.type, row, col: i });
+            }
+        } else {
+            console.log("Not enough horizontal space");
+            canPlaceShip = false;
+        }
+    } else { // shipOrientation === "vertical"
         // Check if there is enough space vertically and no ship
         for (let i = row; i < row + shipLength; i++) {
-          if (newShips.some((ship) => ship.row === i && ship.col === col)) {
-            canPlaceShip = false;
-            break;
-          }
+            if (newShips.some((ship) => ship.row === i && ship.col === col)) {
+                canPlaceShip = false;
+                break;
+            }
         }
 
         if (canPlaceShip && row + shipLength <= 10) {
-          for (let i = row; i < row + shipLength; i++) {
-            newShips.push({ type: selectedShipType.type, row: i, col });
-          }
+            for (let i = row; i < row + shipLength; i++) {
+                newShips.push({ type: selectedShipType.type, row: i, col });
+            }
         } else {
-          console.log("Not enough space");
-          return;
+            console.log("Not enough vertical space");
+            canPlaceShip = false;
         }
-      }
     }
 
-    setShips(newShips);
-    console.log(
-      `Placed ${selectedShipType.type} with length ${shipLength} at position (${row}, ${col} } Current Turn:  ${currentTurn}`
-    );
-  };
+    if (canPlaceShip) {
+        setShips(newShips);
+        console.log(
+            `Placed ${selectedShipType.type} with length ${shipLength} at position (${row}, ${col}) with orientation ${shipOrientation}. Current Turn: ${currentTurn}`
+        );
+    } else {
+        console.log("Failed to place the ship due to insufficient space.");
+    }
+};
+
 
   return (
     <>
@@ -108,7 +124,11 @@ function App() {
           <div>
             <PlaceShips />
           </div>
-          <ShipYard onSelectShip={isGameStarted ? handleSelectShip : null} setGamePhase={setGamePhase} />
+          <ShipYard 
+          onSelectShip={isGameStarted ? handleSelectShip : null} 
+          setGamePhase={setGamePhase} 
+          onOrientationChange={setShipOrientation}
+      />
         </div>
       )}
        <ScoreBoard />

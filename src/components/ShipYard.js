@@ -2,26 +2,26 @@ import React, { useState } from "react";
 import ShipArray from "./ShipConstructor";
 
 
-export default function ShipYard({ onSelectShip, setGamePhase }) {
+export default function ShipYard({ onSelectShip, setGamePhase, onOrientationChange  }) {
   const [selectedShip, setSelectedShip] = useState(null);
   const [orientation, setOrientation] = useState('horizontal');
-
   const handleShipClick = (shipName, shipLength) => {
     setSelectedShip(shipName === selectedShip ? null : shipName);
-    onSelectShip(shipName, shipLength, orientation); // added orientation here
+    onSelectShip(shipName, shipLength, orientation); 
   };
 
-  const handleStartGame = () => {
-    setGamePhase("playing");
-  };
 
 
   return (
     <>
 
-      <button onClick={() => setOrientation(prev => prev === 'horizontal' ? 'vertical' : 'horizontal')}>
-        {orientation === 'horizontal' ? 'Switch to Vertical' : 'Switch to Horizontal'}
-      </button>
+      <button onClick={() => {
+        const newOrientation = orientation === 'horizontal' ? 'vertical' : 'horizontal';
+        setOrientation(newOrientation);
+        
+        if (onOrientationChange) onOrientationChange(newOrientation);
+        
+      }}> Change Orientation </button>
 
 
       <div className="grid-container">
