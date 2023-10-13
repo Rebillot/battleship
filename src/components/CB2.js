@@ -4,7 +4,7 @@ import GameOverModal from "./GameOverModal.js";
 import { useTurn } from "./Context/Context.js";
 
 
-// gene
+// Helper function to generate random computer ship positions
 const generateRandomShips = () => {
   const randomShips = [];
   const availableRows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -33,6 +33,7 @@ const generateRandomShips = () => {
 };
 
 export default function ComputerBoard() {
+  // Component state initialization
   const [ships, setShips] = useState([]);
   const [lastClicked, setLastClicked] = useState(null);
   const [missedShots, setMissedShots] = useState([]); // [ [row, col], [row, col], ...
@@ -43,7 +44,7 @@ export default function ComputerBoard() {
 
 
 
-
+ // Function to handle the player's attack on the computer board
   const handlePlayerAttack = (row, col) => {
     let attackedShipIndex = -1;
 
@@ -91,7 +92,7 @@ export default function ComputerBoard() {
     }
   };
 
-
+// Function to handle click event on a board square
   const handleSquareClick = (row, col) => {
     if (gameOver) return;
     if (currentTurn === "player") {
@@ -106,6 +107,7 @@ export default function ComputerBoard() {
     }
   };
   
+// Function to place a ship on the board
   const handlePlaceShip = (row, col, shipLength, ships) => {
     const newShips = [...ships];
     const directions = [
@@ -144,6 +146,7 @@ export default function ComputerBoard() {
     return ships;
   };
 
+  // Function to initialize the game's starting state
   const initializeGame = () => {
     setGameOver(false);
     // Initialize the game for the computer's turn (randomly place computer ships)
@@ -166,6 +169,7 @@ export default function ComputerBoard() {
 
   };
 
+  // Function to render the computer board UI
   const renderBoard = () => {
     const boardElements = [];
     for (let row = 0; row < 10; row++) {
@@ -211,7 +215,7 @@ export default function ComputerBoard() {
 
 
 
-
+// Effect hook to run the game initialization logic when the component mounts
   useEffect(() => {
     initializeGame();
   }, []);
