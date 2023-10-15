@@ -4,33 +4,7 @@ import GameOverModal from "./GameOverModal.js";
 import { useTurn } from "./Context/Context.js";
 
 
-// Helper function to generate random computer ship positions
-const generateRandomShips = () => {
-  const randomShips = [];
-  const availableRows = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  const availableCols = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-  for (let i = 0; i < 5; i++) {
-    const shipObject = ShipArray[i];
-    const shipLength = shipObject.length;
-    const randomRow = availableRows.splice(
-      Math.floor(Math.random() * availableRows.length),
-      1
-    )[0];
-    const randomCol = availableCols.splice(
-      Math.floor(Math.random() * availableCols.length),
-      1
-    )[0];
-
-    randomShips.push({
-      ship: shipObject,
-      length: shipLength,
-      row: randomRow,
-      col: randomCol,
-    });
-  }
-  return randomShips;
-};
 
 export default function ComputerBoard() {
   // Component state initialization
@@ -42,21 +16,96 @@ export default function ComputerBoard() {
   const [gameOver, setGameOver] = useState(false);
 
 
+// Helper function to generate random computer ship positions
+const generateRandomShips = () => {
+  const ships = [];
+  const shipLengths = [5, 4, 3, 3, 2];
+
+  for (let length of shipLengths) {
+    let shipPlaced = false;
+    let row, col, orientation;
+
+    while (!shipPlaced) {
+      row = Math.floor(Math.random() * 10);
+      col = Math.floor(Math.random() * 10);
+      orientation = Math.floor(Math.random() * 2); // 0 for horizontal, 1 for vertical
+      console.log('Orientation:', orientation);
+
+      if (orientation === 0) {
+        if (col + length <= 10) {
+          const ship = { row, col, length, orientation };
+          ships.push(ship);
+          shipPlaced = true;
+        }
+      } else {
+        if (row + length <= 10) {
+          const ship = { row, col, length, orientation };
+          ships.push(ship);
+          shipPlaced = true;
+        }
+      }
+    }
+  }
+
+  return ships;
+};
+
+const handlePlaceShip = (row, col, length, orientation, ships) => {
+  // Check if ship is placed outside of the board
+  if (orientation === 0 && col + length > 10) {
+    return false;
+  } else if (orientation === 1 && row + length > 10) {
+    return false;
+  }
+
+  // Check if ship overlaps with any existing ships
+  for (let ship of ships) {
+    if (orientation === 0) {
+      // Check if ship overlaps horizontally
+      if (ship.row === row && col <= ship.col + ship.length && col + length > ship.col) {
+        return false;
+      }
+    } else {
+      // Check if ship overlaps vertically
+      if (ship.col === col && row <= ship.row + ship.length && row + length > ship.row) {
+        return false;
+      }
+    }
+  }
+
+  // Place the ship on the board
+  const newShips = [...ships];
+  const newShip = { row, col, length, orientation };
+  newShips.push(newShip);
+  return newShips;
+};
+
+
+
 
 
  // Function to handle the player's attack on the computer board
-  const handlePlayerAttack = (row, col) => {
-    let attackedShipIndex = -1;
+ const handlePlayerAttack = (row, col) => {
+  let attackedShipIndex = -1;
 
-    for (let ship of ships) {
+  for (let ship of ships) {
+    if (ship.orientation === 0) { // horizontal
+      for (let i = 0; i < ship.length; i++) {
+        if (ship.row === row && ship.col + i === col) {
+          attackedShipIndex = ships.indexOf(ship);
+          break;
+        }
+      }
+    } else { // vertical
       for (let i = 0; i < ship.length; i++) {
         if (ship.row + i === row && ship.col === col) {
           attackedShipIndex = ships.indexOf(ship);
           break;
         }
       }
-      if (attackedShipIndex !== -1) break;
-    }  /*starting point for the ship*/
+    }
+    if (attackedShipIndex !== -1) break;
+  } /*starting point for the ship*/
 
     if (attackedShipIndex !== -1) {
       setPlayerHits(prevHits => [...prevHits, { row, col }]);
@@ -108,110 +157,82 @@ export default function ComputerBoard() {
   };
   
 // Function to place a ship on the board
-  const handlePlaceShip = (row, col, shipLength, ships) => {
-    const newShips = [...ships];
-    const directions = [
-      [1, 0],  // right
-      [0, 1],  // down 
-    ];
 
-    for (let dir of directions) {
-      const [rowDir, colDir] = dir;
-      let canPlaceShip = true;
-
-      for (let i = 0; i < shipLength; i++) {
-        const newRow = row + i * rowDir;
-        const newCol = col + i * colDir;
-
-        const isOutOfBounds = newRow < 0 || newRow >= 10 || newCol < 0 || newCol >= 10;
-        const isOverlapping = newShips.some((ship) => ship.row === newRow && ship.col === newCol);
-
-        if (isOutOfBounds || isOverlapping) {
-          canPlaceShip = false;
-          break;
-        }
-      }
-
-      if (canPlaceShip) {
-        for (let i = 0; i < shipLength; i++) {
-          const newRow = row + i * rowDir;
-          const newCol = col + i * colDir;
-
-          newShips.push({ type: "Computer Ship", row: newRow, col: newCol, length: shipLength });
-        }
-        return newShips;
-      }
-    }
-
-    return ships;
-  };
 
   // Function to initialize the game's starting state
   const initializeGame = () => {
     setGameOver(false);
-    // Initialize the game for the computer's turn (randomly place computer ships)
+  
     const randomShips = generateRandomShips();
-    let ships = randomShips;
-
-    for (let i = 0; i < ships.length; i++) {
-      ships = handlePlaceShip(
-        ships[i].row,
-        ships[i].col,
-        ships[i].length,
-        ships
-      );
+    let newShipsList = [];
+  
+    for (let i = 0; i < randomShips.length; i++) {
+      if (handlePlaceShip(
+        randomShips[i].row,
+        randomShips[i].col,
+        randomShips[i].length,
+        randomShips[i].orientation,
+        newShipsList
+      )) {
+        // add to newShipsList if it's a valid placement
+        newShipsList.push({...randomShips[i], hits: 0, status: 'intact'});
+      }
     }
-    ships = ships.map(ship => ({ ...ship, hits: 0, status: 'intact' }));
-
-    coordinatesRef.current = [];
-    setShips(ships);
-
-
+  
+    setShips(newShipsList);
   };
+  
+  
+
+  const resetGame  = () => {
+    window.location.reload();
+  }
 
   // Function to render the computer board UI
   const renderBoard = () => {
     const boardElements = [];
     for (let row = 0; row < 10; row++) {
-      const columns = [];
-      for (let col = 0; col < 10; col++) {
-        const isSquareClicked = coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col);
+        const columns = [];
+        for (let col = 0; col < 10; col++) {
+            const isSquareClicked = coordinatesRef.current.some(coord => coord[0] === row && coord[1] === col);
 
-        let shipAtPosition;
-        for (let ship of ships) {
-          for (let i = 0; i < ship.length; i++) {
-            if (ship.row + i === row && ship.col === col) {
-              shipAtPosition = ship;
-              break;
+            let shipAtPosition;
+            for (let ship of ships) {
+                if (ship.orientation === 0) { // horizontal
+                    if (ship.row === row && ship.col <= col && ship.col + ship.length > col) {
+                        shipAtPosition = ship;
+                        break;
+                    }
+                } else { // vertical
+                    if (ship.row <= row && ship.row + ship.length > row && ship.col === col) {
+                        shipAtPosition = ship;
+                        break;
+                    }
+                }
             }
-          }
-          if (shipAtPosition) break;
+            let squareClass = 'square';
+            if (isSquareClicked) {
+              if (shipAtPosition) {
+                squareClass += ` ${shipAtPosition.status}`;  // add hit or destroyed class
+              } else {
+                squareClass += ' missed';  // missed shot
+              }
+            }
+
+            columns.push(
+              <div
+                key={`${row}-${col}`}
+                className={`${squareClass} `}  // ${shipAtPosition ? shipAtPosition.ship.name : ''}
+                onClick={() => handleSquareClick(row, col)}
+              ></div>
+            ); 
         }
-
-        let squareClass = 'square';
-
-        if (isSquareClicked) {
-          if (shipAtPosition) {
-            squareClass += ` ${shipAtPosition.status}`;  // add hit or destroyed class
-            console.log(shipAtPosition, "shipAtPosition.status")
-          } else {
-            squareClass += ' missed';  // missed shot
-          }
-        }
-
-        columns.push(
-          <div
-            key={`${row}-${col}`}
-            className={`${squareClass} ${shipAtPosition ? shipAtPosition.ship.name : ''}`}
-            onClick={() => handleSquareClick(row, col)}
-          ></div>
-        );
-      }
-      boardElements.push(<div className="board-row" key={row}> {columns} </div>);
+        boardElements.push(<div className="board-row" key={row}> {columns } </div>);
     }
 
     return boardElements;
-  };
+};
+
 
 
 
@@ -223,7 +244,7 @@ export default function ComputerBoard() {
 
   return (
     <div className="board">
-      <GameOverModal isVisible={gameOver} onRestart={initializeGame} />
+      <GameOverModal isVisible={gameOver} onRestart={resetGame} />
       {renderBoard()}
     </div>
   );

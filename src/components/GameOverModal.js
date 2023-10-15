@@ -1,4 +1,7 @@
 
+
+
+
 export default function GameOverModal({ isVisible, onRestart }) {
     return (
       isVisible && (
