@@ -6,7 +6,7 @@ import { useTurn } from './Context/Context';
  * @returns {JSX.Element} The Score Board component.
  */
 export function ScoreBoard() {
-    const { hits, misses, currentTurn, playerhits, playermisses } = useTurn();
+    const { hits, misses, playerhits, playermisses } = useTurn();
   
     return (
       <div className="scoreboard">

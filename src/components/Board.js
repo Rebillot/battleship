@@ -155,12 +155,14 @@ export default function Board({ ships, onSelectShip }) {
             key={`${row}-${col}`}
             className={`square ${shipClass} ${attackClass}`}
             onClick={() => {
-              if (gamePhase === "positioning") {
-                if (onSelectShip) {
-                  onSelectShip(row, col);
-                }
+              if (!onSelectShip) {  // assuming onSelectShip is a boolean or a nullable value
+                console.error('No ship selected');
+                return;
+              }
+              
+              if (gamePhase === "positioning" && ships.length < 17) {
+                onSelectShip(row, col);
               } else if (gamePhase === "playing") {
-                // Only perform the hit/miss check when actually playing the game
                 const shipAtPosition = ships.find(ship => ship.row === row && ship.col === col);
                 if (shipAtPosition && !isAttacked(row, col)) {
                   setHits(prevHits => [...prevHits, { row, col, source: 'player' }]);
@@ -169,8 +171,6 @@ export default function Board({ ships, onSelectShip }) {
                 }
               }
             }}
-
-
           ></div>
         );
       }
@@ -180,15 +180,8 @@ export default function Board({ ships, onSelectShip }) {
     setBoard(initialBoard);
   }, [ships, onSelectShip, hits, misses, currentTurn, toggleTurn]);
 
-
-
-
-  // render the board, and the game over modal
-
   return (
-    
     <div className="board">
-      
       <GameOverModal isVisible={gameOver} onRestart={resetGame} />
       {board}
     </div>

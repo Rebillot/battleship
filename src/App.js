@@ -6,6 +6,13 @@ import PlaceShips from "./components/PlaceShips";
 import { useTurn } from "./components/Context/Context";
 import { ScoreBoard } from "./components/ScoreBoard";
 
+/**
+ * The App component is the main component of the Battleship game.
+ * It defines and initializes state variables for the application, handles selecting and placing ships on the board,
+ * and renders the main JSX content for the game.
+ *
+ * @returns {JSX.Element} The main JSX content for the App component.
+ */
 function App() {
   // Define and initialize state variables for the application
   const [ships, setShips] = useState([]);
@@ -30,7 +37,13 @@ function App() {
   };
 
   // Handler for placing a ship on the player's board
-  const handlePlaceShip = (row, col, shipLength) => {
+  const handlePlaceShip = (row, col) => {
+    if (!selectedShipType) {
+      console.log("No ship selected");
+      return;
+    }
+
+    const shipLength = selectedShipType.length; // Get ship length from the state
     const newShips = [...ships];
 
     if (currentTurn !== "player") {
@@ -41,10 +54,8 @@ function App() {
     let canPlaceShip = true;
 
     if (shipOrientation === "vertical") {
-
       // Check for horizontal ship placement
       for (let i = col; i < col + shipLength; i++) {
-        // Check if another ship occupies this space
         if (newShips.some((ship) => ship.row === row && ship.col === i)) {
           canPlaceShip = false;
           break;
@@ -52,7 +63,6 @@ function App() {
       }
 
       if (canPlaceShip && col + shipLength <= 10) {
-        // Place the ship if valid position found
         for (let i = col; i < col + shipLength; i++) {
           newShips.push({ type: selectedShipType.type, row, col: i });
         }
@@ -60,10 +70,9 @@ function App() {
         console.log("Not enough horizontal space");
         canPlaceShip = false;
       }
-    } else { // shipOrientation === "vertical"
+    } else { // shipOrientation === "horizontal"
       // Check for vertical ship placement
       for (let i = row; i < row + shipLength; i++) {
-        // Check if another ship occupies this space
         if (newShips.some((ship) => ship.row === i && ship.col === col)) {
           canPlaceShip = false;
           break;
@@ -72,7 +81,6 @@ function App() {
 
       if (canPlaceShip && row + shipLength <= 10) {
         for (let i = row; i < row + shipLength; i++) {
-          // Place the ship if valid position found
           newShips.push({ type: selectedShipType.type, row: i, col });
         }
       } else {
@@ -80,66 +88,65 @@ function App() {
         canPlaceShip = false;
       }
     }
-    // Update ships array if the ship was successfully placed
+
     if (canPlaceShip) {
       setShips(newShips);
-      console.log(
-        `Placed ${selectedShipType.type} with length ${shipLength} at position (${row}, ${col}) with orientation ${shipOrientation}. Current Turn: ${currentTurn}`
-      );
+      console.log(`Placed ${selectedShipType.type} with length ${shipLength} at position (${row}, ${col}) with orientation ${shipOrientation}. Current Turn: ${currentTurn}`);
     } else {
       console.log("Failed to place the ship due to insufficient space.");
     }
-  };
+};
+
 
   // Return the main JSX content for the App component
   return (
     <>
-  {!isGameStarted && (
-  <div className="start">
-    <button onClick={() => setIsGameStarted(true)}>
-      Start Game
-    </button>
-  </div>
-)}
+      {!isGameStarted && (
+        <div className="start">
+          <button onClick={() => setIsGameStarted(true)}>
+            Start Game
+          </button>
+        </div>
+      )}
 
-<div className="centered-container">
-  {isGameStarted && (
-    <div className="turn-info">
+      <div className="centered-container">
+        {isGameStarted && (
+          <div className="turn-info">
 
-      <div className="current-turn-text">
-      {currentTurn === "player" ? "Your Turn!" : "Enemy's Turn!"}
-</div>
-    </div>
-    
-  )}
-</div>
+            <div className="current-turn-text">
+              {currentTurn === "player" ? "Your Turn!" : "Enemy's Turn!"}
+            </div>
+          </div>
 
-  <div className="App">
-    <div className="boards">
-      <Board
-        ships={ships}
-        onSelectShip={(row, col) => {
-          handlePlaceShip(row, col, selectedShipType.length);
-        }}
-      />
+        )}
+      </div>
 
-      {isGameStarted && <ComputerBoard gamePhase={gamePhase} />}
-    </div>
-  </div>
+      <div className="App">
+        <div className="boards">
+          <Board
+            ships={ships}
+            onSelectShip={(row, col) => {
+              handlePlaceShip(row, col);
+            }}
+          />
 
-  {!isGameStarted && (
-    <div>
-      <PlaceShips />
-      <ShipYard
-        onSelectShip={handleSelectShip}
-        setGamePhase={setGamePhase}
-        onOrientationChange={setShipOrientation}
-      />
-    </div>
-  )}
+          {isGameStarted && <ComputerBoard gamePhase={gamePhase} />}
+        </div>
+      </div>
 
-{isGameStarted && <ScoreBoard />}
-</>
+      {!isGameStarted && (
+        <div>
+          <PlaceShips />
+          <ShipYard
+            onSelectShip={handleSelectShip}
+            setGamePhase={setGamePhase}
+            onOrientationChange={setShipOrientation}
+          />
+        </div>
+      )}
+
+      {isGameStarted && <ScoreBoard />}
+    </>
 
   );
 }

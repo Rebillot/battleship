@@ -196,7 +196,7 @@ body {
 
 
 button:hover {
-  background-color: #2980b9;
+  background-color: #164d72;
 }
 
 
@@ -405,4 +405,26 @@ button {
   flex-direction: column; /* Stack the h2 tags vertically */
   align-items: center; /* Center the text horizontally */
  
+}
+
+
+.used-ship {
+  opacity: 0.4;            /* Makes the ship appear faded */
+  cursor: not-allowed;     /* Indicates the ship is not clickable */
+  pointer-events: none;    /* Prevents all click, state and cursor options on the ship */
+}
+
+.used-ship .ship-length {
+  text-decoration: line-through;  /* Puts a line through the ship's name to indicate it's used */
+  color: #888;                    /* Gray out the ship name text */
+}
+
+
+
+
+.orientation-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }

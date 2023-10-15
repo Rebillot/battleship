@@ -55,6 +55,8 @@ const generateRandomShips = () => {
 // funtion to handle the placement of a ship on the board, check if the ship is placed outside of the board, check if the ship overlaps with any existing ships,
 // and place the ship on the board depending on the orientation
 const handlePlaceShip = (row, col, length, orientation, ships) => {
+  const occupiedTiles = [];
+  
   // Check if ship is placed outside of the board
   if (orientation === 0 && col + length > 10) {
     return false;
@@ -62,24 +64,31 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
     return false;
   }
 
+  // Generate occupied tiles for this ship
+  for (let i = 0; i < length; i++) {
+    occupiedTiles.push(orientation === 0 ? [row, col + i] : [row + i, col]);
+  }
+
   // Check if ship overlaps with any existing ships
-  for (let ship of ships) {
-    if (orientation === 0) {
-      // Check if ship overlaps horizontally
-      if (ship.row === row && col <= ship.col + ship.length && col + length > ship.col) {
-        return false;
+  for (let shipTile of occupiedTiles) {
+    if (ships.some(ship => {
+      for (let i = 0; i < ship.length; i++) {
+        if (ship.orientation === 0 && ship.row === shipTile[0] && ship.col + i === shipTile[1]) {
+          return true;
+        }
+        if (ship.orientation === 1 && ship.row + i === shipTile[0] && ship.col === shipTile[1]) {
+          return true;
+        }
       }
-    } else {
-      // Check if ship overlaps vertically
-      if (ship.col === col && row <= ship.row + ship.length && row + length > ship.row) {
-        return false;
-      }
+      return false;
+    })) {
+      return false;
     }
   }
 
   // Place the ship on the board
   const newShips = [...ships];
-  const newShip = { row, col, length, orientation };
+  const newShip = { row, col, length, orientation, tiles: occupiedTiles };
   newShips.push(newShip);
   return newShips;
 };
@@ -159,24 +168,33 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
   // Function to initialize the game's starting state by generating random computer ship positions and placing them on the board
   const initializeGame = () => {
     setGameOver(false);
-  
-    const randomShips = generateRandomShips();
+    
+    let totalTiles = 0;
+    
     let newShipsList = [];
-  
-    for (let i = 0; i < randomShips.length; i++) {
-      if (handlePlaceShip(
-        randomShips[i].row,
-        randomShips[i].col,
-        randomShips[i].length,
-        randomShips[i].orientation,
-        newShipsList
-      )) {
-        // add to newShipsList if it's a valid placement
-        newShipsList.push({...randomShips[i], hits: 0, status: 'intact'});
+    
+    while (totalTiles !== 17) {
+      const randomShips = generateRandomShips();
+      newShipsList = [];
+      totalTiles = 0;
+      
+      for (let i = 0; i < randomShips.length; i++) {
+        const shipPlacement = handlePlaceShip(
+          randomShips[i].row,
+          randomShips[i].col,
+          randomShips[i].length,
+          randomShips[i].orientation,
+          newShipsList
+        );
+        if (shipPlacement) {
+          newShipsList = shipPlacement;
+          totalTiles += randomShips[i].length;
+        }
       }
     }
-  
-    setShips(newShipsList);
+    
+    setShips(newShipsList.map(ship => ({ ...ship, hits: 0, status: 'intact' })));
+    console.log("totalTiles used by enemy ships,", totalTiles)
   };
   
  // Function to reset the game by reloading the page
