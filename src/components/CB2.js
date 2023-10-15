@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import ShipArray from "./ShipConstructor.js";
-import GameOverModal from "./GameOverModal.js";
+import YouWinModal from "./YouWinModal.js";
 import { useTurn } from "./Context/Context.js";
 
-
-
-
+/**
+ * This file exports a React component that represents the computer board in a Battleship game.
+ * It contains functions to generate random computer ship positions, handle player attacks, place ships on the board,
+ * initialize the game's starting state, reset the game, and render the computer board UI.
+ * 
+ * @exports ComputerBoard
+ */
 export default function ComputerBoard() {
   // Component state initialization
   const [ships, setShips] = useState([]);
@@ -29,7 +32,6 @@ const generateRandomShips = () => {
       row = Math.floor(Math.random() * 10);
       col = Math.floor(Math.random() * 10);
       orientation = Math.floor(Math.random() * 2); // 0 for horizontal, 1 for vertical
-      console.log('Orientation:', orientation);
 
       if (orientation === 0) {
         if (col + length <= 10) {
@@ -50,6 +52,8 @@ const generateRandomShips = () => {
   return ships;
 };
 
+// funtion to handle the placement of a ship on the board, check if the ship is placed outside of the board, check if the ship overlaps with any existing ships,
+// and place the ship on the board depending on the orientation
 const handlePlaceShip = (row, col, length, orientation, ships) => {
   // Check if ship is placed outside of the board
   if (orientation === 0 && col + length > 10) {
@@ -80,11 +84,7 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
   return newShips;
 };
 
-
-
-
-
- // Function to handle the player's attack on the computer board
+ // Function to handle the player's attack on the computer board and update the board accordingly
  const handlePlayerAttack = (row, col) => {
   let attackedShipIndex = -1;
 
@@ -141,7 +141,7 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
     }
   };
 
-// Function to handle click event on a board square
+// Function to handle click event on a board square and update the board accordingly
   const handleSquareClick = (row, col) => {
     if (gameOver) return;
     if (currentTurn === "player") {
@@ -156,10 +156,7 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
     }
   };
   
-// Function to place a ship on the board
-
-
-  // Function to initialize the game's starting state
+  // Function to initialize the game's starting state by generating random computer ship positions and placing them on the board
   const initializeGame = () => {
     setGameOver(false);
   
@@ -182,13 +179,12 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
     setShips(newShipsList);
   };
   
-  
-
+ // Function to reset the game by reloading the page
   const resetGame  = () => {
     window.location.reload();
   }
 
-  // Function to render the computer board UI
+  // Function to render the computer board UI using the board state
   const renderBoard = () => {
     const boardElements = [];
     for (let row = 0; row < 10; row++) {
@@ -222,7 +218,7 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
             columns.push(
               <div
                 key={`${row}-${col}`}
-                className={`${squareClass} `}  // ${shipAtPosition ? shipAtPosition.ship.name : ''}
+                className={`${squareClass} `}
                 onClick={() => handleSquareClick(row, col)}
               ></div>
             ); 
@@ -234,17 +230,14 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
 };
 
 
-
-
 // Effect hook to run the game initialization logic when the component mounts
   useEffect(() => {
     initializeGame();
   }, []);
 
-
   return (
     <div className="board">
-      <GameOverModal isVisible={gameOver} onRestart={resetGame} />
+      <YouWinModal isVisible={gameOver} onRestart={resetGame} />
       {renderBoard()}
     </div>
   );

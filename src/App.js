@@ -94,52 +94,53 @@ function App() {
   // Return the main JSX content for the App component
   return (
     <>
-      <div className="start" style={{ marginTop: "10px" }}>
-        <button onClick={() => setIsGameStarted(!isGameStarted)}>
-          Start Game
-        </button>
-      </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {isGameStarted && (<h2> Current Turn: {currentTurn} </h2>)}
-      </div>
-      <div style={{ display: "flex" }}>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <h2> Your Fleet </h2>
-        </div>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <h2> Enemy Fleet </h2>
-        </div>
-      </div>
+  {!isGameStarted && (
+  <div className="start">
+    <button onClick={() => setIsGameStarted(true)}>
+      Start Game
+    </button>
+  </div>
+)}
 
+<div className="centered-container">
+  {isGameStarted && (
+    <div className="turn-info">
 
-      {isGameStarted && (
-        <div className="App">
-          <div className="boards">
-            <Board
-              ships={ships}
-              onSelectShip={(row, col) => {
-                handlePlaceShip(row, col, selectedShipType.length);
-              }}
-            />
+      <div className="current-turn-text">
+      {currentTurn === "player" ? "Your Turn!" : "Enemy's Turn!"}
+</div>
+    </div>
+    
+  )}
+</div>
 
-            <ComputerBoard gamePhase={gamePhase} />
-          </div>
-        </div>
-      )}
-      {isGameStarted && (
-        <div>
-          <div>
-            <PlaceShips />
-          </div>
-          <ShipYard
-            onSelectShip={isGameStarted ? handleSelectShip : null}
-            setGamePhase={setGamePhase}
-            onOrientationChange={setShipOrientation}
-          />
-        </div>
-      )}
-      <ScoreBoard />
-    </>
+  <div className="App">
+    <div className="boards">
+      <Board
+        ships={ships}
+        onSelectShip={(row, col) => {
+          handlePlaceShip(row, col, selectedShipType.length);
+        }}
+      />
+
+      {isGameStarted && <ComputerBoard gamePhase={gamePhase} />}
+    </div>
+  </div>
+
+  {!isGameStarted && (
+    <div>
+      <PlaceShips />
+      <ShipYard
+        onSelectShip={handleSelectShip}
+        setGamePhase={setGamePhase}
+        onOrientationChange={setShipOrientation}
+      />
+    </div>
+  )}
+
+{isGameStarted && <ScoreBoard />}
+</>
+
   );
 }
 

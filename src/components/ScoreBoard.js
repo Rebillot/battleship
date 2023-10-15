@@ -1,6 +1,10 @@
 import React from 'react';
 import { useTurn } from './Context/Context';
 
+/**
+ * Renders the Score Board component.
+ * @returns {JSX.Element} The Score Board component.
+ */
 export function ScoreBoard() {
     const { hits, misses, currentTurn, playerhits, playermisses } = useTurn();
   
@@ -12,7 +16,7 @@ export function ScoreBoard() {
           <div>Computer Hits: {hits.length}</div>
           <div>Player Misses: {playermisses.length}</div>
           <div>Computer Misses: {misses.length}</div>
-          <div>Current Turn: {currentTurn}</div>
+
         </div>
       </div>
     );

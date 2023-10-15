@@ -1,6 +1,15 @@
-import React from "react";
 
+/**
+ * Represents a ship in the game of Battleship.
+ * @class
+ */
 class Ship {
+    /**
+     * Creates a new instance of the Ship class.
+     * @constructor
+     * @param {string} name - The name of the ship.
+     * @param {number} length - The length of the ship.
+     */
     constructor(name, length) {
         this.name = name;
         this.length = length;
@@ -9,7 +18,6 @@ class Ship {
         this.health = length;
         this.status = 'normal'; // or whatever default status you want
     }
-    
 }
 
 const carrier = new Ship("Carrier", 5);

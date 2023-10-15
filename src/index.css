@@ -19,6 +19,7 @@ body {
 
 .boards {
   display: flex;
+  justify-content: center; /* Centers the boards horizontally */
 }
 
 .board {
@@ -119,39 +120,289 @@ body {
   background-color: #2db612;
 }
 
-/* Styling for when a ship is hit */
 
 
 /* score board styling */
 
 .scoreboard {
-  padding: 10px;
-  background-color: #22d4d4;
-  border-radius: 5px;
-  margin-bottom: 10px;
+  background-color: rgba(0, 58, 128, 0.8); /* Deep blue with slight opacity */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  margin: 10px auto;
+  color: #fff;
+}
+
+.scoreboard h2 {
   text-align: center;
-  color: black;
+  border-bottom: 2px solid #fff;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.score {
+  display: grid;
+  gap: 10px;
+}
+
+.score > div {
+  font-size: 18px;
+  text-align: center;
+  border: 1px solid #fff;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.2); /* Slight black to make scores pop more */
 }
 
 
+
 .modal-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.7); /* semi-transparent background */
+  z-index: 1000; /* put the modal above everything else */
+}
+
+.modal-content {
+  background-color: #36d8c2;
+  color: black;
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  max-width: 400px; /* you can adjust as per your need */
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+      transform: translateY(-100%);
+      opacity: 0;
+  }
+  to {
+      transform: translateY(0);
+      opacity: 1;
+  }
+}
+
+
+button:hover {
+  background-color: #2980b9;
+}
+
+
+
+button {
+  background-color: #007acc;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+
+.grid-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.grid-container > div {
+  border: 1px solid #007acc;
+  padding: 10px;
+  border-radius: 5px;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.grid-container > div:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ship-length {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.selected-ship {
+  border-color: #00c0ff;
+  background-color: rgba(0, 192, 255, 0.2);
+}
+
+
+
+
+/* place ships styling */
+
+.fleet {
+  background-color: rgba(0, 0, 58, 0.8); /* Deep blue with slight opacity */
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  margin: 10px auto;
+  color: #fff;
+}
+
+.fleet h1 {
+  text-align: center;
+  border-bottom: 2px solid #fff;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.fleet h2 {
+  font-size: 20px;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: normal; /* To override browser default bold for h2 */
+}
+
+
+
+/* navbar styling */
+
+
+.bg-body-tertiary {
+  background-color: rgba(10, 40, 80, 0.95) !important ;  /* Deep navy blue with slight opacity */
+}
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
+
+.navbar-brand {
+  font-size: 24px; /* Enlarged font size */
+  font-weight: bold; /* Bold for emphasis */
+  color: #FFD700 !important; /* Golden color for brand */
+}
+
+.nav-link {
+  color: #ccc !important; /* Gray color for links */
+  border-radius: 4px;
+  margin: 0 10px; /* Margin for spacing */
+  padding: 5px 15px; /* Padding for button-like feel */
+  transition: background-color 0.3s; /* Transition for smooth effect */
+}
+
+.nav-link.active {
+  background-color: #007acc; /* Background color for active link */
+  color: #fff !important; /* White text for active link */
+}
+
+.nav-link:hover {
+  background-color: #005899; /* Darker shade for hover effect */
+  color: #fff !important; /* White text for hover effect */
+}
+
+
+
+
+
+/* Styles for Start button container */
+.start {
+  margin-top: 10px;
+}
+
+/* Styles for centered container */
+.centered-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* Styles for flex container */
+.flex-container {
+  display: flex;
+}
+
+/* Styles for flex item */
+.flex-item {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.modal-content {
-  width: 300px;
-  padding: 20px;
-  background: white;
-  color: #000000;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
+/* Styles for h2 tags */
+.info-text {
+  font-size: 20px;               /* Set font size */
+  color: #3498db;               /* Set font color to a shade of blue */
+  font-weight: bold;            /* Make the text bold */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);  /* Add a subtle text shadow */
+  padding: 10px;                /* Add some padding around the text */
+  border-radius: 5px;           /* Round the corners of the text background */
+  background-color: rgba(255, 255, 255, 0.1);  /* Add a very light background to make text pop out more */
+  margin: 5px 0;                /* Add a bit of margin on top and bottom */
+  transition: all 0.3s ease;    /* Smooth transition for any changes */
+}
+
+/* Add a hover effect */
+.info-text:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.current-turn-text {
+  font-size: 24px;                  /* Set font size larger for emphasis */
+  color: #e74c3c;                  /* Set font color to a shade of red */
+  font-weight: bold;               /* Bold font weight for emphasis */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+  padding: 12px 15px;              /* Padding around the text */
+  border-radius: 8px;              /* Rounded corners */
+  background-color: rgba(255, 255, 255, 0.1); /* Slight white background */
+  margin: 10px 0;                  /* Margin top and bottom */
+  transition: all 0.3s ease;       /* Smooth transition effects */
+  display: inline-block;           /* Make it block-like but inline */
+}
+
+/* Hover effect for added interaction */
+.current-turn-text:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+}
+
+
+
+
+
+/* Styles for centered container */
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center vertically */
+  
+}
+
+/* Styles for turn info */
+.turn-info {
+  display: flex;
+  flex-direction: column; /* Stack the h2 tags vertically */
+  align-items: center; /* Center the text horizontally */
+ 
 }

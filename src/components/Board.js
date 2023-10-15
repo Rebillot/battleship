@@ -186,7 +186,9 @@ export default function Board({ ships, onSelectShip }) {
   // render the board, and the game over modal
 
   return (
+    
     <div className="board">
+      
       <GameOverModal isVisible={gameOver} onRestart={resetGame} />
       {board}
     </div>
