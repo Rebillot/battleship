@@ -136,7 +136,6 @@ const handlePlaceShip = (row, col, length, orientation, ships) => {
         const allShipsDestroyed = updatedShips.every(ship => ship.status === 'destroyed');
         if (allShipsDestroyed) {
           setGameOver(true);
-          // You can display a message or take any other action here
         }
       } else {
         ship.status = 'hit';

@@ -63,6 +63,8 @@ export default function Board({ ships, onSelectShip }) {
   const isAttacked = (row, col) => isHit(row, col) || isMiss(row, col);
   const [lastHits, setLastHits] = useState([])
 
+
+  // function to get the adjacent square to a hit square
   const getUnexploredAdjacentSquare = () => {
     const allDirections = ['up', 'down', 'left', 'right'];
     for (let hit of lastHits) {
@@ -92,6 +94,7 @@ export default function Board({ ships, onSelectShip }) {
     return null;
   };
 
+  // function to attack the player's board
   const attackBoard = () => {
     let row, col, shipAtPosition;
 
@@ -126,10 +129,8 @@ export default function Board({ ships, onSelectShip }) {
     setAttackedCount(prevCount => prevCount + 1);
   };
 
-  
 
   // interval to count atacks, and toggle turns. the board is 100 squares, so the computer will attack 100 times, and then the game will end.
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (currentTurn === "computer" && attackedCount < 100) {
@@ -143,8 +144,6 @@ export default function Board({ ships, onSelectShip }) {
     return () => clearInterval(interval);
 
   }, [currentTurn, toggleTurn, hits, misses, ships, attackedCount]);
-
-
 
 
   // useEffect to render the board, and check for hits and misses
@@ -163,7 +162,7 @@ export default function Board({ ships, onSelectShip }) {
             key={`${row}-${col}`}
             className={`square ${shipClass} ${attackClass}`}
             onClick={() => {
-              if (!onSelectShip) {  // assuming onSelectShip is a boolean or a nullable value
+              if (!onSelectShip) { 
                 console.error('No ship selected');
                 return;
               }
