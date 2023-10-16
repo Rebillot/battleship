@@ -20,9 +20,15 @@ function GameOverModal({ isVisible, onRestart }) {
 
 // Board main component
 
+/**
+ * Board component for the Battleship game.
+ * @param {Object[]} ships - Array of ship objects with row, col, and type properties.
+ * @param {function} onSelectShip - Function to handle selecting a ship on the board.
+ * @returns {JSX.Element} Board component JSX.
+ */
 export default function Board({ ships, onSelectShip }) {
   const [board, setBoard] = useState([]);
-  const [gamePhase, setGamePhase] = useState("positioning");
+  const [gamePhase, setGamePhase] = useState("positioning"); // positioning or playing
   const [gameOver, setGameOver] = useState(false);
   const [attackedCount, setAttackedCount] = useState(0);
   const { hits, setHits, misses, setMisses, currentTurn, toggleTurn } = useTurn();
@@ -119,6 +125,8 @@ export default function Board({ ships, onSelectShip }) {
 
     setAttackedCount(prevCount => prevCount + 1);
   };
+
+  
 
   // interval to count atacks, and toggle turns. the board is 100 squares, so the computer will attack 100 times, and then the game will end.
 

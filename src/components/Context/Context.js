@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import ShipArray from "../ShipConstructor";
 
 
 // Create a context for managing the turn state.
@@ -16,9 +17,13 @@ export const TurnProvider = ({ children }) => {
   // State for tracking whose turn it currently is (default to "player")
   const [currentTurn, setCurrentTurn] = useState("player");
 
+  // State for tracking the ships that have been placed on the board.
+  const [ships, setShips] = useState(ShipArray);
+
   // State for tracking hits and misses against the computer.
   const [hits, setHits] = useState([]);
   const [misses, setMisses] = useState([]);
+
 
 
   // State for tracking hits and misses against the player.
@@ -35,7 +40,7 @@ export const TurnProvider = ({ children }) => {
   // Return the TurnContext.Provider component, providing all of the turn-related state 
   // and functions to its children.
   return (
-    <TurnContext.Provider value={{ currentTurn, toggleTurn, hits, setHits, misses, setMisses, playerhits, setPlayerHits, playermisses, setPlayerMisses }}>
+    <TurnContext.Provider value={{ currentTurn, toggleTurn, hits, setHits, misses, setMisses, playerhits, setPlayerHits, playermisses, setPlayerMisses, ships, setShips }}>
       {children}
     </TurnContext.Provider>
   );

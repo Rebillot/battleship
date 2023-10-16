@@ -16,7 +16,8 @@ class Ship {
         this.width = 10;
         this.height = length;
         this.health = length;
-        this.status = 'normal'; // or whatever default status you want
+        this.status = 'normal';
+        this.isPlaced = false;
     }
 }
 

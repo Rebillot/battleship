@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ShipYard from "./components/ShipYard";
 import Board from "./components/Board";
 import ComputerBoard from "./components/CB2";
-import PlaceShips from "./components/PlaceShips";
+import Instructions from "./components/Instructions";
 import { useTurn } from "./components/Context/Context";
 import { ScoreBoard } from "./components/ScoreBoard";
 
@@ -136,7 +136,7 @@ function App() {
 
       {!isGameStarted && (
         <div>
-          <PlaceShips />
+          <Instructions />
           <ShipYard
             onSelectShip={handleSelectShip}
             setGamePhase={setGamePhase}
