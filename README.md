@@ -16,7 +16,6 @@
 - **React**: A JavaScript library for building user interfaces.
 - **Node.js**: A JavaScript runtime built on Chrome's V8 JavaScript engine.
 - **CSS**: For styling and layout of the game.
-(Add any other libraries, frameworks, or technologies you've used here)
 
 <div align="center">
   <h2>Getting Started</h2>
